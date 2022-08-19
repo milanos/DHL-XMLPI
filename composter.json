@@ -1,0 +1,22 @@
+{
+    "name": "milanos/dhl-xmlpi_10",
+
+    "description": "PHP library to communicate with the DHL XML Services.",
+
+    "require": {
+        "php": ">=5.3.0"
+    },
+
+    "license": "LGPL-2.1",
+
+	"autoload": {
+        "classmap" : [ "DHL" ]
+	},
+
+	"authors": [
+        {
+            "name": "Miloslaw Kolak",
+            "email": "miloslaw.kolak@gmail.com"
+        }
+    ]
+}
