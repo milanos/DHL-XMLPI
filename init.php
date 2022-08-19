@@ -1,3 +1,4 @@
+<?php
 define('DHL_API_DIR', __DIR__ . '/');
 require_once(DHL_API_DIR . 'vendor/autoloadManager/autoloadManager.php');
 
