@@ -28,10 +28,10 @@ class XMLPI{
           		return $this->$name;
 	  }
 	  
-       function array_to_xml( $data, &$xml_data ) { //funkcja do zamiany tablicy w xmla
+       function array_to_xml( $data, &$xml_data ) { 
           foreach( $data as $key => $value ) {
-                if( is_array($value) ) { //jesli jest to tablica nie znacznik
-                          if ($value[0]) { //istnieje indeks liczbowy czyli będa pod tym samym kluczem głównym - np exportline item
+                if( is_array($value) ) { 
+                          if ($value[0]) {
 								foreach($value as $key2=>$value2){
 										$subnode = $xml_data->addChild($key);
 										foreach($value2 as $key3=>$value3){
@@ -98,9 +98,9 @@ class XMLPI{
 			if ($data['IsDutiable']=='Y'){ //tylko jesli celna
 				$Dutiable=$xml->addChild('Dutiable');
 				$this->array_to_xml($data[Dutiable],$Dutiable);
-				$xml->addChild('UseDHLInvoice','N'); 			//tworzenia faktury przez API  N/Y
-				$xml->addChild('DHLInvoiceLanguageCode','en');	//jezyk faktury
-				$xml->addChild('DHLInvoiceType','CMI');			//typ faktury CMI/PMI
+				$xml->addChild('UseDHLInvoice','N'); 			
+				$xml->addChild('DHLInvoiceLanguageCode','en');	
+				$xml->addChild('DHLInvoiceType','CMI');			
 				$ExportDeclaration=$xml->addChild('ExportDeclaration');
 				$this->array_to_xml($data[ExportDeclaration],$ExportDeclaration);
 			}
