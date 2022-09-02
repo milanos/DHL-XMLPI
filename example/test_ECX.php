@@ -8,7 +8,7 @@ $xmlpi=new XMLPI('test'); //#Tryb test/live
 
 # parametry przesyłki - create_data() # - prosze je ewentualnie modyfikować
 function create_data(){
-	$data['ShipperAccountNumber']='*******';//DHL Account number
+	$data['ShipperAccountNumber']='************';//numer konta płatnika/nadawcy
 	$data['Consignee']=array( 					//Dane odbiorcy
 							'CompanyName'	=>'Jan Kowalski Company',
 							'AddressLine1'	=>'berliner str1', 	//wymagane
@@ -61,82 +61,16 @@ function create_data(){
 													'Email'				=>'contact@test.com',
 													)
 							);	
-##########      TYLKO dla przeysłek CELNYCH	################################################################################################################
-	//czyli jeśli $data['IsDutiable']='Y' - w innym przypadku poniższe tablice nie są używane
-	$data['ExportDeclaration']=array(
-								'SignatureName'			=>'afsdgasfd',//O
-								'ExportReason'			=>'Sale',	//O
-								'ExportReasonCode'		=>'P',		//P (Permanent)T ( Temporary)R ( Re-Export) 
-								'InvoiceNumber'			=>'zdfgsdf',//numer faktury
-								'InvoiceDate'			=>date("Y-m-d"),
-								'ExportLineItem'		=>array(
-															array(
-																'LineNumber'			=>'1',
-																'Quantity'				=>'13',
-																'QuantityUnit'			=>'PCS',
-																'Description'			=>'dfsasdfasdf',
-																'Value'					=>'34.45', //for all pieces - for item of infoice
-																'CommodityCode'			=>'3456345',
-																'Weight'				=>array(
-																							'Weight'		=>'1.0',
-																							'WeightUnit'	=>'K'
-																						),
-																'GrossWeight'			=>array(
-																							'Weight'		=>'1.0',
-																							'WeightUnit'	=>'K'
-																						),
-																'ManufactureCountryCode'=>'PL'
-															)
-															,array(
-																'LineNumber'			=>'2',
-																'Quantity'				=>'3',
-																'QuantityUnit'			=>'PCS',																
-																'Description'			=>'cos tam',
-																'Value'					=>'22.45', //for all pieces - for item of infoice
-																'CommodityCode'			=>'3456345',
-																'Weight'				=>array(
-																							'Weight'		=>'2.4',
-																							'WeightUnit'	=>'K'
-																						),
-																'GrossWeight'			=>array(
-																							'Weight'		=>'2.4',
-																							'WeightUnit'	=>'K'
-																						),
-																'ManufactureCountryCode'=>'PL'
-															)
-														),
-									'PlaceOfIncoterm'	=>'Katy wroclawskie' //Place of incoterms
 
-							);
-	//tylko dla przeysłek celnych i tylko wtedy jeśli chcemy uploadować własną fakturę - jest to uzupełnienie usługi PLT
-	
-	$data['DocImages']=array(
-							'DocImage'=>array(
-											'Type'			=>'CIN', //typ faktury (CIN _commercial invoice)
-											'Image'			=>'JVBERi0x.............o1MzUyCiUlRU9GCg==', //tu wstawiamy zakodowany w base64 obraz faktury
-											'ImageFormat'	=>'PDF' //format faktury (np PDF)
-											)
-	);
-	
-	/////////
+
 	$data['LabelImageFormat']='PDF'; //oczekiwany format listu przewozowego : PDF lub ZPL2
 	$data['RequestArchiveDoc']='Y'; //generowanie listu: "WaybillDOC" - kopii listu przewozowego
 	$data['Label']=array('LabelTemplate'=>'8X4_PDF'); //szablon listu - / 6X4_PDF, 8X4_thermal, 6X4_thermal - thermal wyłacznie dla ZPL2
 	
 	#usługi dodatkowe - jesli maja być
-		$data['SpecialService'][]=array('SpecialServiceType'		=>'WY',); /*PLT - TYlko jesli 
-													załaczamy elektroniczny obraz faktury (dla prodktów celny: P,Y,M,E,H)
-													niektóre kraje nie akcpetują PLT lub akcpetują z limitem wartościowym: https://app.dhlexpress.pl/plt/inc/index.php
-													*/
-		//$data['SpecialService'][]=array('SpecialServiceType'		=>'DD',); //DTP/DDP - nalezy pamietać o incoterms
+		//$data['SpecialService'][]=array('SpecialServiceType'		=>'AA',)
 	$data['EProcShip']='N'; // Y -bez AWB,  N - z AWB . Y pozwala wysałać requesta do walidacji i nie otrzymamy do niego listu przewozowego
 
-	//jesli celny wymagane, jesli nie celny można zignorować nie jest generowana ta sekcja w XML
-	$data['Dutiable']=array(
-							'DeclaredValue'		=>'22.56',	//zawsze w formacie xx.xx (zawsze czesci setne z rozdzielaczem w postaci kropki)
-							'DeclaredCurrency'	=>'EUR',
-							'TermsOfTrade'		=>'DAP'			//incoterms  DAP/ DDP
-							);
 	return $data;
 }
 
