@@ -110,7 +110,7 @@ if ((string)($xmlpi
         ->xml_in_SimpleXML->AirwayBillNumber . '.' . $xmlpi
         ->xml_in_SimpleXML
         ->LabelImage->OutputFormat, $label);
-    echo '<hr>List zapisany: ' . $xmlpi
+    echo '<hr>Label saved: ' . $xmlpi
         ->xml_in_SimpleXML->AirwayBillNumber . '.' . $xmlpi
         ->xml_in_SimpleXML
         ->LabelImage->OutputFormat . '<hr>';
