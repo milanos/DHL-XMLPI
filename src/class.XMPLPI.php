@@ -68,7 +68,7 @@ class XMLPI
                     foreach ($value as $key2 => $value2)
                     {
                         if (is_array($value2))
-                        { //jesli jest tablicą
+                        { //is array
                             $subnode2 = $subnode->addChild($key2);
                             foreach ($value2 as $key3 => $value3)
                             {
@@ -84,7 +84,7 @@ class XMLPI
 
             }
             else
-            { //nie jest tablicą - twórz dziecko z wartością
+            { //not array - create child with value
                 $xml_data->addChild("$key", htmlspecialchars("$value"));
             }
         }
@@ -103,7 +103,7 @@ class XMLPI
         }
         else
         {
-            die('Nie określony tryb pracy test/live');
+            die('Please put mode (test/live)');
         }
         $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?' . '><DHLXML/>');
         $Request = $xml->addChild('Request');
@@ -132,12 +132,12 @@ class XMLPI
             ->Consignee
             ->AddressLine3);
         if ($data['IsDutiable'] == 'Y')
-        { //tylko jesli celna
+        { //if dutiable
             $Dutiable = $xml->addChild('Dutiable');
             $this->array_to_xml($data[Dutiable], $Dutiable);
-            $xml->addChild('UseDHLInvoice', 'N');
+            $xml->addChild('UseDHLInvoice', 'N'); // create Invoice by API
             $xml->addChild('DHLInvoiceLanguageCode', 'en');
-            $xml->addChild('DHLInvoiceType', 'CMI');
+            $xml->addChild('DHLInvoiceType', 'CMI'); //type of invoice
             $ExportDeclaration = $xml->addChild('ExportDeclaration');
             $this->array_to_xml($data[ExportDeclaration], $ExportDeclaration);
         }
@@ -158,19 +158,19 @@ class XMLPI
             ->Shipper
             ->AddressLine3);
         if ($data[SpecialService])
-        { //SpecialServices przekazywane sa jako tablica indeksowana liczbowo
+        { //SpecialServices
             foreach ($data[SpecialService] as $value)
             {
                 if ($value['SpecialServiceType'] == 'WY')
                 {
                     if ($data['IsDutiable'] == 'Y')
-                    { //dodaj WY tylko jesli jest celna
+                    { //add WY only if duties
                         $SpecialService = $xml->addChild('SpecialService');
                         $this->array_to_xml($value, $SpecialService);
                     }
                 }
                 else
-                { //dodaj pozostałe usługi dodatkowe
+                { //rest of additionaly services
                     $SpecialService = $xml->addChild('SpecialService');
                     $this->array_to_xml($value, $SpecialService);
                 }
@@ -178,7 +178,7 @@ class XMLPI
         }
         $xml->addChild('EProcShip', $data['EProcShip']);
         if ($data['IsDutiable'] == 'Y')
-        { //tylko jesli celna
+        { //only if duties - add image of invoice
             if ($data['DocImages']['DocImage']['Image'])
             { //tylko jesli jest kod base64 faktury
                 $DocImages = $xml->addChild('DocImages');
@@ -203,7 +203,7 @@ class XMLPI
         $this->xml_in = utf8_encode($this->post_url($this->server, $this->xml_out)); //utf8_encode - funkcja kodująca w utf
         if (strlen($this->xml_in) == 0)
         {
-            echo '</br>Brak odpowiedzi: ' . $this->nazwa_pliku . ' Kolejna próba nr 2</br>';
+            echo '</br>No response: ' . $this->nazwa_pliku . ' try again - 2</br>';
             flush();
             ob_flush();
             sleep(2);
@@ -212,11 +212,11 @@ class XMLPI
         }
         if (strlen($this->xml_in) == 0)
         {
-            echo '</br>Brak odpowiedzi: ' . $this->nazwa_pliku . ' Kolejna próba nr 3</br>';
+            echo '</br>No response: ' . $this->nazwa_pliku . ' try again - 3</br>';
             flush();
             ob_flush();
             sleep(2);
-            $this->xml_in = utf8_encode($this->post_url($this->server, $this->xml_out)); //utf8_encode - funkcja kodująca w utf
+            $this->xml_in = utf8_encode($this->post_url($this->server, $this->xml_out)); //utf8_encode 
             
         }
         $this->xml_in_SimpleXML = simplexml_load_string($this->xml_in);
