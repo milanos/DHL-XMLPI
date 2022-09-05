@@ -3,17 +3,16 @@ error_reporting(E_ALL ^ E_NOTICE);
 ini_set('memory_limit', '256M');
 set_time_limit(300000);
 require_once ('class.XMPLPI.php');
-$xmlpi = new XMLPI('test'); //#Tryb test/live
-#proszę wpisać w klasę XMLPI dane dostepowe - w $credentials
-# parametry przesyłki - create_data() # - prosze je ewentualnie modyfikować
+$xmlpi = new XMLPI('test'); //mode:   test/live
+#please write dedicated credentials for TEST and LIVE envirnoment in XMPLPI class !  ($credentials array)
 function create_data()
 {
-    $data['ShipperAccountNumber'] = '************'; //numer konta płatnika/nadawcy
-    $data['Consignee'] = array( //Dane odbiorcy
+    $data['ShipperAccountNumber'] = '************'; //Shipper/ Payer DHL Account
+    $data['Consignee'] = array( //Receiver data
         'CompanyName' => 'Jan Kowalski Company',
-        'AddressLine1' => 'berliner str1', //wymagane
-        'AddressLine2' => ' str1', //O
-        'AddressLine3' => '', //O
+        'AddressLine1' => 'berliner str1', 
+        'AddressLine2' => ' str1', 
+        'AddressLine3' => '', 
         'City' => 'Hamburg',
         'PostalCode' => '20068',
         'CountryCode' => 'DE',
@@ -21,17 +20,17 @@ function create_data()
         'Contact' => array(
             'PersonName' => 'Jan Kowalskie',
             'PhoneNumber' => 'q34553',
-            'PhoneExtension' => '', //O
-            'Telex' => '', //O
-            'Email' => 'test_receiver@o2.pl', //O
+            'PhoneExtension' => '',
+            'Telex' => '',
+            'Email' => 'test_receiver@o2.pl',
             
         )
     );
     $data['Reference'] = array(
-        'ReferenceID' => 'Referencja przesyłki'
-    ); //referencje przesyłki - znajdują się na fakturze z DHL
-    $data['IsDutiable'] = 'N'; //czy produkt celny ('Y'/'N'); znacznik Y powinien być uzyty dla produktów P,H,Y,E,M
-    $data['ShipmentDetails'] = array( //szczegóły przesylki
+        'ReferenceID' => 'Shipment reference'
+    );
+    $data['IsDutiable'] = 'N'; //dutiable shipment ('Y'/'N');  Y for GlobalProductCode P,H,Y,E,M
+    $data['ShipmentDetails'] = array( //details of shipment
         'Pieces' => array(
             'Piece' => array(
                 'PackageType' => 'CP',
@@ -51,19 +50,19 @@ function create_data()
             
         ) ,
         'WeightUnit' => 'K',
-        'GlobalProductCode' => 'U', //produkt" P,U,D,T,K,Y,M,H,W....   P- przesyłka celna poza EU, U- przesyłka niecelna do EU
+        'GlobalProductCode' => 'U', //product one from P,U,D,T,K,Y,M,H,W....   
         'Date' => date("Y-m-d") ,
-        'Contents' => 'Zawartosc', //zawartosc przesylki
+        'Contents' => 'Content', //Content
         'DimensionUnit' => 'C',
         'IsDutiable' => $data['IsDutiable'],
-        'CurrencyCode' => 'PLN', //waluta - zostawiamy PLN
-        'CustData' => 'dodatkowe informacje', //dodatkowe informacje drukowany pomiedzy 2 a 3 kodem paskowycm
+        'CurrencyCode' => 'PLN', //currency
+        'CustData' => 'dodatkowe informacje', //Additional information
         
     );
     $data['Shipper'] = array(
         'ShipperID' => $data['ShipperAccountNumber'],
         'CompanyName' => 'Send COmpany',
-        'AddressLine1' => 'Stawowa 113m', //wymagane tylko addresline 1
+        'AddressLine1' => 'Stawowa 113m', 
         'AddressLine2' => '',
         'AddressLine3' => '',
         'City' => 'Katy Wroclawskie',
@@ -79,29 +78,29 @@ function create_data()
         )
     );
 
-    $data['LabelImageFormat'] = 'PDF'; //oczekiwany format listu przewozowego : PDF lub ZPL2
-    $data['RequestArchiveDoc'] = 'Y'; //generowanie listu: "WaybillDOC" - kopii listu przewozowego
+    $data['LabelImageFormat'] = 'PDF'; // PDF / ZPL2
+    $data['RequestArchiveDoc'] = 'Y'; //generate "WaybillDOC" 
     $data['Label'] = array(
         'LabelTemplate' => '8X4_PDF'
-    ); //szablon listu - / 6X4_PDF,a 8X4_thermal, 6X4_thermal - thermal wyłacznie dla ZPL2
+    ); //schema of label - / 6X4_PDF,a 8X4_thermal, 6X4_thermal - thermal only for ZPL2
     #usługi dodatkowe - jesli maja być
     //$data['SpecialService'][]=array('SpecialServiceType'		=>'AA',)
-    $data['EProcShip'] = 'N'; // Y -bez AWB,  N - z AWB . Y pozwala wysałać requesta do walidacji i nie otrzymamy do niego listu przewozowego
+    $data['EProcShip'] = 'N'; // Y -without AWB - check only,  N - with AWB
     return $data;
 }
 
-#1 krok - Przygotowanie XML OUT - czyli Requesta na bazie danych z funkcji create_data()
-$xmlpi->create_xml_out(create_data()); //generowanie XML_out który zostanie wysłany do WebService
-#mamy gotowy Request w zmiennej $xmlpi->xml_out (+ do zmiennej   $xmlpi->xml_out_SimpleXML w formacie SimpleXML)
-#2krok  - Wysłanie do WebService Requesta i wpisanie Response do zmiennej $xmlpi->xml_in  + do zmiennej   $xmlpi->xml_in_SimpleXML w formacie SimpleXML)
+#1 Step - prepare input data
+$xmlpi->create_xml_out(create_data());
+
+#2 Step  - send request
 $xmlpi->send_request_XML();
-#3krok - sprawdzenie odpowiedzi
+#3 Step - check response
 if ((string)($xmlpi
     ->xml_in_SimpleXML
     ->Note
     ->ActionNote) == Success)
 {
-    //OK - dekodowanie etykiety
+    //OK - Success
     $label = base64_decode($xmlpi
         ->xml_in_SimpleXML
         ->LabelImage
@@ -117,7 +116,7 @@ if ((string)($xmlpi
 }
 else
 {
-    //ERRROR - wyświetlenie błędu
+    //ERRROR -show errors
     XMLPI::tab($xmlpi
         ->xml_in_SimpleXML
         ->Response
@@ -125,5 +124,4 @@ else
 }
 
 //XMLPI::tab($xmlpi->xml_out);
-
 ?>
