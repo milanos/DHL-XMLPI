@@ -83,7 +83,7 @@ function create_data()
     $data['Label'] = array(
         'LabelTemplate' => '8X4_PDF'
     ); //schema of label - / 6X4_PDF,a 8X4_thermal, 6X4_thermal - thermal only for ZPL2
-    #usługi dodatkowe - jesli maja być
+    #additionaly services
     //$data['SpecialService'][]=array('SpecialServiceType'		=>'AA',)
     $data['EProcShip'] = 'N'; // Y -without AWB - check only,  N - with AWB
     return $data;
@@ -94,6 +94,7 @@ $xmlpi->create_xml_out(create_data());
 
 #2 Step  - send request
 $xmlpi->send_request_XML();
+
 #3 Step - check response
 if ((string)($xmlpi
     ->xml_in_SimpleXML
