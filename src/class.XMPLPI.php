@@ -91,6 +91,25 @@ class XMLPI
     }
     public function create_xml_out($data)
     {
+        /*
+        $data=array(
+           String   'ShipperAccountNumber'
+           Array    'Consignee'
+           Array    'Reference'
+           String   'IsDutiable'
+           Array    'ShipmentDetails'
+           Array    'Shipper'
+           String   'LabelImageFormat'
+           String   'RequestArchiveDoc'
+           String   'LabelImageFormat'
+           Array   'Label'
+           String   'EProcShip'
+           Array    'SpecialService'    --if additionaly services exist
+           Array    'ExportDeclaration' -- only for duties shipments
+           Array    'DocImages'         -- only for duties shipments with PLT service
+           Array    'Dutiable'          -- only for duties shipments
+        );
+        */
         if ($this->mode == 'test')
         {
             // test server
